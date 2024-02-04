@@ -1,15 +1,22 @@
 import React from 'react';
-import {SafeAreaView, StatusBar, StyleSheet, Text} from 'react-native';
+import {
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Platform,
+  UIManager,
+} from 'react-native';
 import Home from './src/modules/Home';
-
-function App(){
-
+/**
+ * @description 开启布局动画
+ *
+ */
+UIManager.setLayoutAnimationEnabledExperimental &&
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+function App() {
   return (
     <SafeAreaView style={styles.root}>
-      <StatusBar
-        barStyle={'dark-content'}
-        backgroundColor={'white'}
-      />
+      <StatusBar barStyle={'dark-content'} backgroundColor={'white'} />
       <Home />
     </SafeAreaView>
   );
@@ -20,8 +27,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     // backgroundColor: '#f5f5f5'
-    backgroundColor: 'dark'
-  }
-})
+    backgroundColor: 'dark',
+  },
+});
 
 export default App;
