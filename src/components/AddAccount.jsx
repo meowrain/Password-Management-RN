@@ -10,22 +10,26 @@ import {
   Keyboard,
   ScrollView,
   KeyboardAvoidingView,
-  Platform
+  Platform,
 } from 'react-native';
 import icon_close_modal from '../assets/icon_close_modal.png';
+import {getUUID} from '../utils/UUID';
+import {save,load} from '../utils/Storage';
 export default forwardRef((props, ref) => {
   const [visable, setVisable] = useState(false); //设置Modal是否可见的State,默认不可见
   const [type, setType] = useState('🎮游戏');
   const [name, setName] = useState('');
   const [account, setAccount] = useState('');
   const [password, setPassword] = useState('');
-
+  const [id, setId] = useState();
   /**
    * @description 控制Modal显示函数
    * @return setVisable(true);
    */
   const show = () => {
     setVisable(true);
+    let id = getUUID();
+    setId(id);
   };
 
   /**
@@ -35,6 +39,11 @@ export default forwardRef((props, ref) => {
   const hide = () => {
     setVisable(false);
   };
+
+  /**
+   * @description 将show和hide函数传递给父组件
+   *
+   */
   useImperativeHandle(ref, () => {
     return {
       show,
@@ -42,6 +51,25 @@ export default forwardRef((props, ref) => {
     };
   });
 
+  /**
+   * @description 保存按钮执行逻辑
+   */
+  const onSavePress = () => {
+    const newAccount = {
+      id,
+      type,
+      name,
+      account,
+      password,
+    };
+    load('accountList').then(data => {
+      let accountList = data ? JSON.parse(data) : [];
+      accountList.push(newAccount);
+      save('accountList', JSON.stringify(accountList)).then(() => {
+        hide();
+      });
+    });
+  };
   /**
    * @description 渲染 添加账号文字和关闭按钮
    * @returns React.FC
@@ -255,7 +283,10 @@ export default forwardRef((props, ref) => {
       },
     });
     return (
-      <TouchableOpacity style={styles.saveButton} activeOpacity={0.6}>
+      <TouchableOpacity
+        style={styles.saveButton}
+        activeOpacity={0.6}
+        onPress={onSavePress}>
         <Text style={styles.saveTxt}> 保存 </Text>
       </TouchableOpacity>
     );
@@ -269,23 +300,22 @@ export default forwardRef((props, ref) => {
       animationType="fade">
       {/* NOTE: 使用KeyboardAvoidingView可以让这个框自己往上走，不会让键盘挡住 */}
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding':'height'}
-      >
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         {/* NOTE: 当我们需要点击空白地方就能关闭键盘的时候，只需要把父组件设置为ScrollView就行了  */}
-      <ScrollView contentContainerStyle={styles.root}>
-        <View style={styles.content}>
-          {renderTitle()}
-          <Text style={styles.subTitleTxt}>账号类型</Text>
-          {renderType()}
-          <Text style={styles.subTitleTxt}>账号名称</Text>
-          {renderName()}
-          <Text style={styles.subTitleTxt}>账号</Text>
-          {renderAccount()}
-          <Text style={styles.subTitleTxt}>密码</Text>
-          {renderPassword()}
-          {renderButton()}
-        </View>
-      </ScrollView>
+        <ScrollView contentContainerStyle={styles.root}>
+          <View style={styles.content}>
+            {renderTitle()}
+            <Text style={styles.subTitleTxt}>账号类型</Text>
+            {renderType()}
+            <Text style={styles.subTitleTxt}>账号名称</Text>
+            {renderName()}
+            <Text style={styles.subTitleTxt}>账号</Text>
+            {renderAccount()}
+            <Text style={styles.subTitleTxt}>密码</Text>
+            {renderPassword()}
+            {renderButton()}
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </Modal>
   );
