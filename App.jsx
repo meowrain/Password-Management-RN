@@ -1,16 +1,16 @@
 import React from 'react';
-import {SafeAreaView, StatusBar, StyleSheet, useColorScheme} from 'react-native';
+import {SafeAreaView, StatusBar, StyleSheet, Text} from 'react-native';
+import Home from './src/modules/Home';
 
-
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+function App(){
 
   return (
     <SafeAreaView style={styles.root}>
       <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        barStyle={'dark-content'}
         backgroundColor={'white'}
       />
+      <Home />
     </SafeAreaView>
   );
 }
@@ -19,7 +19,8 @@ const styles = StyleSheet.create({
   root: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#f5f5f5'
+    // backgroundColor: '#f5f5f5'
+    backgroundColor: 'dark'
   }
 })
 
