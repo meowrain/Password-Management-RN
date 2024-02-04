@@ -19,13 +19,11 @@ import {
   icon_arrow,
 } from '../utils/Icons';
 
-
 /**
  * @description 列表中的账户类型
  * /*NOTE: 列表中的账户类型
  */
 const typesArray = ['🎮游戏', '🖥️平台', '💳银行卡', '💁其它'];
-
 
 /**
  *  @description  图标map表
@@ -51,13 +49,12 @@ export default () => {
     [typesArray[2]]: true,
     [typesArray[3]]: true,
   });
-  useEffect(() => {
 
-
-    /**
-     * @description 加载账号列表，存储在sectionData中
-     * /*NOTE: 加载账号列表，存储在sectionData中
-     */
+  /**
+   * @description 加载账号列表，存储在sectionData中
+   * /*NOTE: 加载账号列表，存储在sectionData中
+   */
+  const loadData = () => {
     load('accountList').then(data => {
       const accountList = JSON.parse(data);
       const gameList =
@@ -75,10 +72,24 @@ export default () => {
         {type: typesArray[3], data: otherList},
       ];
       setSectionData(sectionData);
-    }, []);
-  });
+    });
+  };
 
 
+  /**
+   * @description 回调函数，当添加新内容的时候传递给子组件AddAccount,然后执行
+   */
+  const onAccountSaveSuccess = () => {
+    loadData();
+  };
+
+
+  // 进入主页面的时候进行加载
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  
   /**
    *
    * @description 渲染主页头部
@@ -91,7 +102,6 @@ export default () => {
       </View>
     );
   };
-
 
   /**
    *
@@ -204,7 +214,7 @@ export default () => {
         <Image source={icon_add} style={styles.addImg}></Image>
       </TouchableOpacity>
 
-      <AddAccount ref={addAcountRef} />
+      <AddAccount ref={addAcountRef} onSave={onAccountSaveSuccess} />
     </View>
   );
 };

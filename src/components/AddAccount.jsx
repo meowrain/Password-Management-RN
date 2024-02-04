@@ -22,6 +22,7 @@ export default forwardRef((props, ref) => {
   const [account, setAccount] = useState('');
   const [password, setPassword] = useState('');
   const [id, setId] = useState();
+  const {onSave} = props;
   /**
    * @description 控制Modal显示函数
    * @return setVisable(true);
@@ -67,6 +68,7 @@ export default forwardRef((props, ref) => {
       accountList.push(newAccount);
       save('accountList', JSON.stringify(accountList)).then(() => {
         hide();
+        onSave();
       });
     });
   };
