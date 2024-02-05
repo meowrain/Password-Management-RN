@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   LayoutAnimation,
   SectionList,
@@ -6,10 +7,11 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Switch
 } from 'react-native';
 import AddAccount from '../components/AddAccount';
 import {useEffect, useRef, useState} from 'react';
-import {load, remove} from '../utils/Storage';
+import {load, remove,save} from '../utils/Storage';
 import {
   icon_add,
   icon_game,
@@ -49,6 +51,11 @@ export default () => {
     [typesArray[2]]: true,
     [typesArray[3]]: true,
   });
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => {
+    console.log(isEnabled)
+    setIsEnabled(!isEnabled);
+  };
 
   /**
    * @description 加载账号列表，存储在sectionData中
@@ -71,6 +78,7 @@ export default () => {
         {type: typesArray[2], data: bankList},
         {type: typesArray[3], data: otherList},
       ];
+      LayoutAnimation.easeInEaseOut()
       setSectionData(sectionData);
     });
   };
@@ -82,6 +90,18 @@ export default () => {
     loadData();
   };
 
+  /**
+   * @description  删除账号
+   */
+  const deleteAccount = (account)=>{
+    load('accountList').then((data)=>{
+      let accountList = JSON.parse(data);
+      accountList = accountList.filter((item)=>item.id !== account.id)
+      save('accountList',JSON.stringify(accountList)).then(()=>{
+        loadData();
+      });
+    })
+  }
   // 进入主页面的时候进行加载
   useEffect(() => {
     loadData();
@@ -96,6 +116,10 @@ export default () => {
     return (
       <View style={styles.titleLayout}>
         <Text style={styles.titleTxt}>账号管理</Text>
+        <Switch style={styles.switch}
+         onValueChange={toggleSwitch}
+         value={isEnabled}
+        />
       </View>
     );
   };
@@ -143,11 +167,23 @@ export default () => {
         activeOpacity={0.7}
         onPress={() => {
           addAcountRef.current.show(item);
+        }}
+        onLongPress={() => {
+          Alert.alert('提示',`确定删除[${item.name}]？`,      [
+            {
+              text: "取消",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel"
+            },
+            { text: "删除", onPress: () => deleteAccount(item) }
+          ]
+    );
+          // remove()
         }}>
         <Text style={styles.nameTxt}>{item.name}</Text>
         <View style={styles.accPwdLayout}>
           <Text style={styles.accPwdTxt}>{`账号: ${item.account}`}</Text>
-          <Text>{`密码： ${item.password}`}</Text>
+          <Text>{`密码： ${isEnabled ? item.password : '*'.repeat(item.password.length)}` }</Text>
         </View>
       </TouchableOpacity>
     );
@@ -247,6 +283,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#333333',
     fontWeight: 'bold',
+  },
+  switch:{
+    position: 'absolute',
+    right: 12,
   },
   addButton: {
     position: 'absolute',
