@@ -295,7 +295,8 @@ export default forwardRef((props, ref) => {
         <TextInput
           style={styles.input}
           maxLength={20}
-          value={isOpenEye ? password: '*'.repeat(password.length)}
+          value={password}
+          secureTextEntry={isOpenEye}
           onChangeText={text => {
             setPassword(text || '');
           }}></TextInput>

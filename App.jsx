@@ -26,8 +26,7 @@ const styles = StyleSheet.create({
   root: {
     width: '100%',
     height: '100%',
-    // backgroundColor: '#f5f5f5'
-    backgroundColor: 'dark',
+    backgroundColor: '#f5f5f5'
   },
 });
 
