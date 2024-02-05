@@ -23,14 +23,31 @@ export default forwardRef((props, ref) => {
   const [password, setPassword] = useState('');
   const [id, setId] = useState();
   const {onSave} = props;
+  const [isModify,setIsModify] = useState(false);
+
   /**
    * @description 控制Modal显示函数
    * @return setVisable(true);
    */
-  const show = () => {
+  const show = (currentAccount) => {
     setVisable(true);
-    let id = getUUID();
-    setId(id);
+    if(currentAccount){
+      setIsModify(true);
+      setId(currentAccount.id);
+      setType(currentAccount.type);
+      setName(currentAccount.name);
+      setAccount(currentAccount.account);
+      setPassword(currentAccount.password);
+    }else{
+      setIsModify(false);
+      let id = getUUID();
+      setId(id);
+      setType('🎮游戏');
+      setName('');
+      setAccount('');
+      setPassword('');
+    }
+
   };
 
   /**
@@ -65,6 +82,9 @@ export default forwardRef((props, ref) => {
     };
     load('accountList').then(data => {
       let accountList = data ? JSON.parse(data) : [];
+      if(isModify) {
+        accountList = accountList.filter(item => item.id !== id);
+      }
       accountList.push(newAccount);
       save('accountList', JSON.stringify(accountList)).then(() => {
         hide();
@@ -101,7 +121,7 @@ export default forwardRef((props, ref) => {
     });
     return (
       <View style={styles.titleLayout}>
-        <Text style={styles.titleTxt}>添加账号</Text>
+        <Text style={styles.titleTxt}>{isModify ? '编辑账号' : '添加账号'}</Text>
         <TouchableOpacity
           activeOpacity={0.5}
           style={styles.closeButton}

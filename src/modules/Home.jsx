@@ -75,7 +75,6 @@ export default () => {
     });
   };
 
-
   /**
    * @description 回调函数，当添加新内容的时候传递给子组件AddAccount,然后执行
    */
@@ -83,13 +82,11 @@ export default () => {
     loadData();
   };
 
-
   // 进入主页面的时候进行加载
   useEffect(() => {
     loadData();
   }, []);
 
-  
   /**
    *
    * @description 渲染主页头部
@@ -141,13 +138,18 @@ export default () => {
       },
     });
     return (
-      <View style={styles.itemLayout}>
+      <TouchableOpacity
+        style={styles.itemLayout}
+        activeOpacity={0.7}
+        onPress={() => {
+          addAcountRef.current.show(item);
+        }}>
         <Text style={styles.nameTxt}>{item.name}</Text>
         <View style={styles.accPwdLayout}>
           <Text style={styles.accPwdTxt}>{`账号: ${item.account}`}</Text>
           <Text>{`密码： ${item.password}`}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -159,7 +161,14 @@ export default () => {
    */
   const renderSectionHeader = ({section}) => {
     return (
-      <View
+      <TouchableOpacity
+        onPress={() => {
+          const copy = {...sectionState};
+          copy[section.type] = !copy[section.type];
+          setSectionState(copy);
+          LayoutAnimation.easeInEaseOut();
+        }}
+        activeOpacity={0.7}
         style={[
           styles.groupHeader,
           {
@@ -193,7 +202,7 @@ export default () => {
             ]}
             source={icon_arrow}></Image>
         </TouchableOpacity>
-      </View>
+      </TouchableOpacity>
     );
   };
   return (
